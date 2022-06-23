@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Define variables"""
+"""Define variables using annotations"""
 
 
 a = int(1)
