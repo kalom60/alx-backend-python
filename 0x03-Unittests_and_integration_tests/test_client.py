@@ -17,7 +17,7 @@ class TestGithubOrgClient(unittest.TestCase):
         ("abc", {"payload": False}),
     ])
     @patch("client.get_json")
-    def test_org(self, org, return_val, patched_json):
+    def test_org(self, org, return_val, patched_json) -> None:
         """ test the org method """
         patched_json.return_value = return_val
         url = GithubOrgClient(org)
