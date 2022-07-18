@@ -46,16 +46,14 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(test_return, ["episodes.dart"])
             mock_patched_json.assert_called_once
             mock_repo.assert_called_once
-
+            
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
         ({"license": {"key": "other_license"}}, "my_license", False)
-    ])
-    def test_has_license(self, repo, license, expect):
-        """tests has_license method"""
-        test_client = GithubOrgClient("google")
-        test_return = test_client.has_license(repo, license)
-        self.assertEqual(expect, test_return)
+        ])
+    def test_has_license(self, repo, license, res):
+        """a function that test the has_license method"""
+        self.assertEqual(GithubOrgClient.has_license(repo, license), res)
 
 
 if __name__ == "__main__":
