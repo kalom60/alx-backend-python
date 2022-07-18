@@ -3,6 +3,7 @@
 Implementing Unittest for client module
 """
 import unittest
+from typing import Dict
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 
@@ -16,7 +17,7 @@ class TestGithubOrgClient(unittest.TestCase):
         ("abc", {"payload": False}),
     ])
     @patch("client.get_json")
-    def test_org(self, org, return_val, patched_json):
+    def test_org(self, org: str, return_val: Dict, patched_json):
         """ test the org method """
         patched_json.return_value = return_val
         url = GithubOrgClient(org)
@@ -51,7 +52,7 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"license": {"key": "my_license"}}, "my_license", True),
         ({"license": {"key": "other_license"}}, "my_license", False)
     ])
-    def test_has_license(self, repo, license, expect):
+    def test_has_license(self, repo: Dict, license: str, expect):
         """tests has_license method"""
         self.assertEqual(GithubOrgClient.has_license(repo, license), expect)
 
