@@ -3,7 +3,7 @@
 Implementing unittest and also parameterized it
 """
 import unittest
-from typing import Dict, Tuple, Union
+from typing import Mapping, Dict, Sequence, Union
 from parameterized import parameterized
 
 
@@ -19,9 +19,9 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     def test_access_nested_map(
             self,
-            nested_map: Dict,
-            path: Tuple,
-            expect: Union[Dict, int]
+            nested_map: Mapping,
+            path: Sequence,
+            expect: Union[Sequence, int]
     ):
         """test access_nested_map function returns"""
         self.assertEqual(access_nested_map(nested_map, path), expect)
@@ -32,9 +32,13 @@ class TestAccessNestedMap(unittest.TestCase):
     ])
     def test_access_nested_map_exception(
             self,
-            nested_map: Dict,
-            path: Tuple,
+            nested_map: Mapping,
+            path: Sequence,
             expect: Exception
     ):
         """test access_nested_map function exception rasises"""
-        self.assertRaises(access_nested_map(nested_map, path), expect)
+        self.assertRaises(expect, access_nested_map(nested_map, path))
+
+
+if __name__ == "__main__":
+    unittest.main()
