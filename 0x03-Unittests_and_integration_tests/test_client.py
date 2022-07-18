@@ -3,7 +3,7 @@
 Implementing Unittest for client module
 """
 import unittest
-from unittest.mock import patch, PropertyMock, MagicMock
+from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 
 from client import GithubOrgClient
@@ -12,14 +12,17 @@ from client import GithubOrgClient
 class TestGithubOrgClient(unittest.TestCase):
     """test GithubOrgClient class"""
     @parameterized.expand([
-        ("google"),
-        ("abc")
+        ("google", {"payload": True}),
+        ("abc", {"payload": False}),
     ])
-    @patch("utils.get_json")
-    def test_org(self, web: str, patched_json):
-        """test the org method"""
-        url = GithubOrgClient(web)
-        url.org
+    @patch("client.get_json")
+    def test_org(self, org, return_val, patched_json):
+        """ test the org method """
+        patched_json.return_value = return_val
+        url = GithubOrgClient(org)
+        test = url.org
+        self.assertEqual(test, patched_json.return_value)
+        patched_json.assert_called_once()
 
     def test_public_repos_url(self):
         """test _public_repos_url method"""
@@ -29,24 +32,20 @@ class TestGithubOrgClient(unittest.TestCase):
             GithubOrgClient._public_repos_url
 
     @patch("client.get_json")
-    def test_public_repos(self, mock_get_json: MagicMock) -> None:
+    def test_public_repos(self, mock_patched_json):
         """tests the public_repos method"""
-        test_payload = {
-            'repos_url': "https://api.github.com/users/google/repos",
-            'repos': [{"id": 7697149, "name": "episodes.dart"}]
-        }
-        mock_get_json.return_value = test_payload["repos"]
-        with patch(
-                "client.GithubOrgClient._public_repos_url",
+        mock_patched_json.return_value = [{"name": "episodes.dart"}]
+        with patch.object(
+                GithubOrgClient,
+                "_public_repos_url",
                 new_callable=PropertyMock,
-                ) as mock_public_repos_url:
-            mock_public_repos_url.return_value = test_payload["repos_url"]
-            self.assertEqual(
-                GithubOrgClient("google").public_repos(),
-                ["episodes.dart"],
-            )
-            mock_public_repos_url.assert_called_once()
-        mock_get_json.assert_called_once()
+                return_value="https://api.github.com/"
+        ) as mock_repo:
+            test_client = GithubOrgClient("episodes.dart")
+            test_return = test_client.public_repos()
+            self.assertEqual(test_return, ["episodes.dart"])
+            mock_patched_json.assert_called_once
+            mock_repo.assert_called_once
 
 
 if __name__ == "__main__":
