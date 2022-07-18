@@ -3,6 +3,7 @@
 Implementing Unittest for client module
 """
 import unittest
+from typing import Dict
 from unittest.mock import patch, PropertyMock, Mock
 from parameterized import parameterized, parameterized_class
 
@@ -17,7 +18,7 @@ class TestGithubOrgClient(unittest.TestCase):
         ("abc", {"payload": False}),
     ])
     @patch("client.get_json")
-    def test_org(self, org, return_val, patched_json):
+    def test_org(self, org: str, return_val: Dict, patched_json) -> None:
         """test the org method if it returns the correct value"""
         patched_json.return_value = return_val
         url = GithubOrgClient(org)
@@ -33,7 +34,7 @@ class TestGithubOrgClient(unittest.TestCase):
             GithubOrgClient._public_repos_url
 
     @patch("client.get_json")
-    def test_public_repos(self, mock_patched_json):
+    def test_public_repos(self, mock_patched_json) -> None:
         """tests the public_repos method"""
         mock_patched_json.return_value = [{"name": "episodes.dart"}]
         with patch.object(
