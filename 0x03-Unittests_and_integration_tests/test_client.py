@@ -3,7 +3,6 @@
 Implementing Unittest for client module
 """
 import unittest
-from typing import Dict
 from unittest.mock import patch, PropertyMock, Mock
 from parameterized import parameterized, parameterized_class
 
@@ -12,14 +11,14 @@ from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """test GithubOrgClient class"""
+    """class to test client.GithubOrgClient class"""
     @parameterized.expand([
         ("google", {"payload": True}),
         ("abc", {"payload": False}),
     ])
     @patch("client.get_json")
     def test_org(self, org, return_val, patched_json):
-        """ test the org method return the correct value"""
+        """test the org method if it returns the correct value"""
         patched_json.return_value = return_val
         url = GithubOrgClient(org)
         test = url.org
@@ -48,7 +47,7 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(test_return, ["episodes.dart"])
             mock_patched_json.assert_called_once
             mock_repo.assert_called_once
-            
+
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
         ({"license": {"key": "other_license"}}, "my_license", False)
@@ -57,7 +56,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """a function that test the has_license method"""
         self.assertEqual(GithubOrgClient.has_license(repo, license), res)
 
-       
+
 @parameterized_class([
     {
         'org_payload': TEST_PAYLOAD[0][0],
@@ -101,7 +100,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """Removes the class fixtures"""
-        cls.get_patcher.stop()       
+        cls.get_patcher.stop()
 
 
 if __name__ == "__main__":
