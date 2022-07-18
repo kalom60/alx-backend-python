@@ -3,11 +3,10 @@
 Implementing Unittest for client module
 """
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock, MagicMock
 from parameterized import parameterized
 
 from client import GithubOrgClient
-from utils import get_json
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -29,13 +28,25 @@ class TestGithubOrgClient(unittest.TestCase):
                     .com/orgs/abc/repos"}
             GithubOrgClient._public_repos_url
 
-    @patch('utils.get_json')
-    def test_public_repos(self, patched_json):
-        """test public_repos method"""
-        patched_json_res = {"name": "episodes.dart"}
-        with patch('client.GithubOrgClient._public_repos_url') as repos:
-            repos.return_value = ["episodes.dart"]
-            GithubOrgClient.public_repos
+    @patch("client.get_json")
+    def test_public_repos(self, mock_get_json: MagicMock) -> None:
+        """tests the public_repos method"""
+        test_payload = {
+            'repos_url': "https://api.github.com/users/google/repos",
+            'repos': [{"id": 7697149, "name": "episodes.dart"}]
+        }
+        mock_get_json.return_value = test_payload["repos"]
+        with patch(
+                "client.GithubOrgClient._public_repos_url",
+                new_callable=PropertyMock,
+                ) as mock_public_repos_url:
+            mock_public_repos_url.return_value = test_payload["repos_url"]
+            self.assertEqual(
+                GithubOrgClient("google").public_repos(),
+                ["episodes.dart"],
+            )
+            mock_public_repos_url.assert_called_once()
+        mock_get_json.assert_called_once()
 
 
 if __name__ == "__main__":
