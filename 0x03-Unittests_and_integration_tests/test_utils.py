@@ -37,7 +37,7 @@ class TestAccessNestedMap(unittest.TestCase):
             expect: Exception
     ):
         """test access_nested_map function exception rasises"""
-        self.assertRaises(expect, access_nested_map(nested_map, path))
+        self.assertRaises(expect, access_nested_map, nested_map, path)
 
 
 if __name__ == "__main__":
