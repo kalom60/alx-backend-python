@@ -4,7 +4,6 @@ Implementing Unittest for client module
 """
 import unittest
 from unittest.mock import patch
-from typing import Dict
 from parameterized import parameterized
 
 from client import GithubOrgClient
@@ -28,6 +27,14 @@ class TestGithubOrgClient(unittest.TestCase):
             web_res = {"repos_url": "https://api.github\
                     .com/orgs/abc/repos"}
             GithubOrgClient._public_repos_url
+
+    @patch('utils.get_json')
+    def test_public_repos(self, patched_json):
+        """test public_repos method"""
+        patched_json_res = {"name": "episodes.dart"}
+        with patch('client.GithubOrgClient._public_repos_url') as repos:
+            repos.return_value = ["episodes.dart"]
+            GithubOrgClient.public_repos
 
 
 if __name__ == "__main__":
